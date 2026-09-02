@@ -42,6 +42,14 @@ async function setupDatabase() {
     await client.query(migration002Sql);
     console.log("Migration 002 complete.");
 
+    console.log("Running migration 005 (German saddle categories)...");
+    const migration005Sql = fs.readFileSync(
+      path.join(__dirname, "../migrations/005_german_saddle_categories.sql"),
+      "utf8",
+    );
+    await client.query(migration005Sql);
+    console.log("Migration 005 complete.");
+
     // ── Create admin user ──────────────────────────────────────────────────────
     console.log("Creating admin user...");
     const adminPassword = process.env.ADMIN_PASSWORD || "Boyalinco$10";
