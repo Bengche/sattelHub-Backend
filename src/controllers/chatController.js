@@ -2,39 +2,50 @@ const { GoogleGenAI } = require("@google/genai");
 const pool = require("../config/database");
 const SITE_CONFIG = require("../config/siteConfig");
 
-const SYSTEM_PROMPT = `You are Sterling, an elite equestrian advisor and luxury sales consultant for Saddles Market — a premium horse saddle retailer based in Lexington, Kentucky.
+const AI_MODELS = [
+  "gemini-flash-latest",
+  "gemini-3.5-flash-lite",
+  "gemini-flash-lite-latest",
+];
 
-ABOUT SADDLES MARKET:
-- Expert-curated selection of Western, English, Dressage, Jumping, Trail, Barrel Racing, and Youth saddles
-- Every saddle hand-vetted by working equestrians — quality over quantity
-- Address: 4001 Wing Commander Way, Lexington, KY 40511, USA
-- Website: saddlesmarket.com
+const formatPrice = (amount) =>
+  new Intl.NumberFormat(SITE_CONFIG.currency.locale, {
+    style: "currency",
+    currency: SITE_CONFIG.currency.code,
+    minimumFractionDigits: 2,
+  }).format(amount);
 
-POLICIES YOU MUST KNOW (never guess or make up alternatives):
-- 30-Day Free Trial on every saddle — ride it, if it's not perfect, return it for a full refund, no questions asked
-- Free standard shipping on orders over $2,000
-- Standard shipping: 3–5 business days at $49
-- Express shipping: 1–3 business days at $99
-- All shipments fully insured and tracked end-to-end
-- No restocking fees — ever
-- Phone/WhatsApp: +1 (914) 432-9936 | Support: support@saddlesmarket.com
+const SYSTEM_PROMPT = `Du bist Sterling, ein erstklassiger Reitsportberater und Luxus-Verkaufsberater für ${SITE_CONFIG.name}, einen Anbieter hochwertiger Reitsättel.
 
-YOUR MISSION:
-- Convert every visitor into a confident buyer
-- Help customers find their perfect saddle — ask about discipline, rider experience, budget, and horse if needed
-- Reference ONLY products listed in [AVAILABLE PRODUCTS] below — never fabricate stock, prices, or availability
-- If the exact requested product is unavailable, acknowledge it warmly and pivot to the best available alternatives
-- Always close with a clear, natural call to action (invite them to view a product, try a saddle, or ask more questions)
+ÜBER SATTELHUB.DE:
+- Fachkundig ausgewählte Western-, englische, Dressur-, Spring-, Wander-, Barrel-Racing- und Jugendsättel
+- Jeder Sattel wird von erfahrenen Reitern geprüft - Qualität vor Quantität
+- Adresse: ${SITE_CONFIG.address.full}
+- Website: ${SITE_CONFIG.url}
 
-TONE: Warm, expert, confident. You're a trusted advisor — not a pushy salesperson.
+WICHTIGE RICHTLINIEN (niemals raten oder Alternativen erfinden):
+- Jeder Sattel kann 30 Tage kostenlos getestet werden. Bei Nichtgefallen ist eine vollständige Erstattung möglich.
+- Kostenloser Standardversand ab ${SITE_CONFIG.shipping.freeShippingThreshold} EUR
+- Standardversand: 3-5 Werktage
+- Expressversand: 1-3 Werktage
+- Alle Sendungen sind versichert und werden vollständig verfolgt
+- Keine Wiedereinlagerungsgebühren
+- Support: ${SITE_CONFIG.contact.supportEmail}
 
-STRICT RULES:
-- Keep responses under 160 words
-- No markdown headers or bullet walls — write in short, natural paragraphs
-- When referencing products from the list, mention their name and price naturally in the text
-- When products are displayed as cards below your message, reference them with "tap the card to explore" or similar
-- When suggesting site pages, always format them as clickable markdown links like [Browse Products](/products) or [Contact Support](/contact), and if it helps, the frontend domain name is saddlesmarket.com
-- If no products match, ask a clarifying question or recommend they browse the full collection at /products`;
+DEINE AUFGABE:
+- Hilf Kunden, den passenden Sattel zu finden. Frage bei Bedarf nach Disziplin, Erfahrung, Budget und Pferd.
+- Beziehe dich ausschließlich auf Produkte aus [AVAILABLE PRODUCTS]. Erfinde niemals Bestand, Preise oder Verfügbarkeit.
+- Wenn das gewünschte Produkt nicht verfügbar ist, nenne freundlich passende Alternativen.
+- Beende jede Antwort mit einer natürlichen Handlungsaufforderung.
+
+TON: Warm, fachkundig und selbstbewusst. Du bist ein vertrauenswürdiger Berater, kein aufdringlicher Verkäufer.
+
+- Antworte immer auf Deutsch, auch wenn die Frage auf Englisch gestellt wird.
+- Halte Antworten unter 160 Wörtern und schreibe kurze, natürliche Absätze ohne lange Aufzählungen.
+- Wenn du Produkte nennst, erwähne Name und Preis natürlich auf Deutsch.
+- Wenn Produktkarten angezeigt werden, verweise mit "Karte öffnen" oder einer ähnlichen Formulierung darauf.
+- Verwende klickbare Markdown-Links wie [Produkte ansehen](/products) oder [Support kontaktieren](/contact).
+- Wenn keine Produkte passen, stelle eine Rückfrage oder verweise auf [alle Sättel](/products).`;
 
 function extractKeywords(message) {
   const stopWords = new Set([
@@ -86,7 +97,7 @@ function extractKeywords(message) {
 
   return message
     .toLowerCase()
-    .replace(/[^a-z0-9\s]/g, " ")
+    .replace(/[^a-z0-9äöüß\s]/g, " ")
     .split(/\s+/)
     .filter((w) => w.length > 2 && !stopWords.has(w))
     .slice(0, 6);
@@ -133,23 +144,24 @@ const chat = async (req, res, next) => {
     if (!message || typeof message !== "string" || !message.trim()) {
       return res
         .status(400)
-        .json({ success: false, message: "Message is required." });
+        .json({ success: false, message: "Eine Nachricht ist erforderlich." });
     }
     if (message.length > 500) {
       return res
         .status(400)
-        .json({ success: false, message: "Message too long." });
+        .json({ success: false, message: "Die Nachricht ist zu lang." });
     }
     if (!Array.isArray(history)) {
       return res
         .status(400)
-        .json({ success: false, message: "Invalid history format." });
+        .json({ success: false, message: "Ungültiges Verlaufsformat." });
     }
 
     if (!process.env.GEMINI_API_KEY) {
-      return res
-        .status(503)
-        .json({ success: false, message: "AI service not configured." });
+      return res.status(503).json({
+        success: false,
+        message: "Der KI-Dienst ist nicht konfiguriert.",
+      });
     }
 
     let products = [];
@@ -165,14 +177,14 @@ const chat = async (req, res, next) => {
           products
             .map(
               (p) =>
-                `• ${p.name}${p.brand ? ` by ${p.brand}` : ""} — $${parseFloat(p.price).toFixed(2)}` +
-                `${p.compare_price ? ` (was $${parseFloat(p.compare_price).toFixed(2)})` : ""}` +
-                ` | ${p.discipline ? p.discipline.replace("_", " ") : "all disciplines"}` +
-                ` | Condition: ${p.condition || "new"}` +
-                ` | Rating: ${p.average_rating || "N/A"}/5`,
+                `• ${p.name}${p.brand ? ` von ${p.brand}` : ""} - ${formatPrice(parseFloat(p.price))}` +
+                `${p.compare_price ? ` (zuvor ${formatPrice(parseFloat(p.compare_price))})` : ""}` +
+                ` | ${p.discipline ? p.discipline.replace("_", " ") : "alle Disziplinen"}` +
+                ` | Zustand: ${p.condition || "neu"}` +
+                ` | Bewertung: ${p.average_rating || "k. A."}/5`,
             )
             .join("\n")
-        : "\n\n[AVAILABLE PRODUCTS] No exact matches found for this query. Respond helpfully — ask a clarifying question or invite them to browse /products.";
+        : "\n\n[AVAILABLE PRODUCTS] Keine passenden Produkte gefunden. Antworte hilfreich auf Deutsch, stelle eine Rückfrage oder verweise auf /products.";
 
     // Initialize new SDK client
     const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
@@ -192,16 +204,31 @@ const chat = async (req, res, next) => {
       parts: [{ text: message.trim() }],
     });
 
-    const response = await ai.models.generateContent({
-      model: "gemini-flash-latest",
-      contents,
-      config: {
-        systemInstruction: SYSTEM_PROMPT + productContext,
-        // maxOutputTokens: 300,
-        temperature: 0.7,
-        topP: 0.9,
-      },
-    });
+    let response;
+    let lastModelError;
+
+    for (const model of AI_MODELS) {
+      try {
+        response = await ai.models.generateContent({
+          model,
+          contents,
+          config: {
+            systemInstruction: SYSTEM_PROMPT + productContext,
+            // maxOutputTokens: 300,
+            temperature: 0.7,
+            topP: 0.9,
+          },
+        });
+        break;
+      } catch (err) {
+        lastModelError = err;
+        console.error(`Gemini model ${model} failed:`, err.message);
+      }
+    }
+
+    if (!response) {
+      throw lastModelError || new Error("All Gemini models failed");
+    }
 
     return res.json({
       success: true,
@@ -222,7 +249,8 @@ const chat = async (req, res, next) => {
     console.error("Gemini API execution error:", err);
     return res.status(500).json({
       success: false,
-      message: "Failed to generate AI response. Please try again.",
+      message:
+        "Die KI-Antwort konnte nicht erstellt werden. Bitte versuchen Sie es erneut.",
     });
   }
 };

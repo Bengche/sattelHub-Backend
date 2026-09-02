@@ -5,7 +5,7 @@ const { name, url, contact, address } = SITE_CONFIG;
 // ─── Base email wrapper ────────────────────────────────────────────────────────
 const baseTemplate = (content, previewText = "") => `
 <!DOCTYPE html>
-<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<html lang="de" xmlns="http://www.w3.org/1999/xhtml">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -70,25 +70,25 @@ const baseTemplate = (content, previewText = "") => `
     <div class="email-container">
       <div class="email-header">
         <div class="email-header-logo">${name}</div>
-        <div class="email-header-tagline">Premium Horse Saddles</div>
+        <div class="email-header-tagline">Hochwertige Reitsättel</div>
       </div>
       <div class="email-body">
         ${content}
       </div>
       <div class="email-footer">
-        <p>&copy; ${new Date().getFullYear()} ${name}. All rights reserved.</p>
+        <p>&copy; ${new Date().getFullYear()} ${name}. Alle Rechte vorbehalten.</p>
         <p>${address.full}</p>
         <p>
           <a href="tel:${contact.phone}">${contact.phoneDisplay || contact.phone}</a> &nbsp;|&nbsp;
           <a href="mailto:${contact.supportEmail}">${contact.supportEmail}</a>
         </p>
         <div class="social-links">
-          <a href="${url}/privacy-policy">Privacy Policy</a> &nbsp;|&nbsp;
-          <a href="${url}/terms-conditions">Terms</a> &nbsp;|&nbsp;
-          <a href="${url}/contact">Contact Us</a>
+          <a href="${url}/privacy-policy">Datenschutz</a> &nbsp;|&nbsp;
+          <a href="${url}/terms-conditions">AGB</a> &nbsp;|&nbsp;
+          <a href="${url}/contact">Kontakt</a>
         </div>
         <p style="margin-top:12px;color:#5A7A9A;font-size:11px;">
-          You received this email because you have an account or placed an order with ${name}.
+          Sie erhalten diese E-Mail, weil Sie ein Konto bei ${name} haben oder eine Bestellung aufgegeben haben.
         </p>
       </div>
     </div>
@@ -104,27 +104,27 @@ const emailVerificationTemplate = ({
   verifyLink,
   expiresMinutes = 15,
 }) => ({
-  subject: `Verify Your Email — ${name}`,
+  subject: `E-Mail-Adresse bestätigen - ${name}`,
   html: baseTemplate(
     `
-    <p class="email-greeting">Welcome to ${name}, ${firstName}.</p>
-    <p class="email-text">Thank you for creating your account. To complete your registration, please verify your email address using the 6-digit code below or by clicking the verification link.</p>
+    <p class="email-greeting">Willkommen bei ${name}, ${firstName}.</p>
+    <p class="email-text">Vielen Dank für Ihre Registrierung. Bitte bestätigen Sie Ihre E-Mail-Adresse mit dem folgenden sechsstelligen Code oder über den Bestätigungslink.</p>
 
     <div class="email-otp">
       <div class="email-otp-code">${otpCode}</div>
-      <div class="email-otp-label">Email Verification Code</div>
+      <div class="email-otp-label">Bestätigungscode</div>
     </div>
 
-    <p class="email-text" style="text-align:center;font-size:13px;color:#6A6A6A;">This code expires in ${expiresMinutes} minutes.</p>
+    <p class="email-text" style="text-align:center;font-size:13px;color:#6A6A6A;">Dieser Code ist ${expiresMinutes} Minuten gültig.</p>
 
     <div class="email-cta-wrapper">
-      <a href="${verifyLink}" class="email-cta">Verify My Email</a>
+      <a href="${verifyLink}" class="email-cta">E-Mail bestätigen</a>
     </div>
 
     <hr class="email-divider" />
 
     <div class="email-info-box">
-      <p>If you did not create an account with ${name}, you can safely ignore this email. No account will be created without email verification.</p>
+      <p>Wenn Sie kein Konto bei ${name} erstellt haben, können Sie diese E-Mail ignorieren. Ohne Bestätigung wird kein Konto angelegt.</p>
     </div>
 
     <p class="email-text" style="font-size:13px;color:#6A6A6A;">Or copy and paste this link into your browser:<br/><a href="${verifyLink}" style="color:#1C3557;word-break:break-all;">${verifyLink}</a></p>
