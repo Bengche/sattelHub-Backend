@@ -46,8 +46,8 @@ app.use(
 // ─── CORS ─────────────────────────────────────────────────────────────────────
 const allowedOrigins = [
   SITE_CONFIG.url,
-  "https://www.saddlesmarket.com",
-  "https://saddlesmarket.com",
+  "https://www.sattelhub.de",
+  "https://sattelhub.de",
   "http://localhost:3000",
   process.env.FRONTEND_URL,
 ].filter(Boolean);
