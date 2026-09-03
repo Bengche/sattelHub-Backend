@@ -2,11 +2,14 @@ const { GoogleGenAI } = require("@google/genai");
 const pool = require("../config/database");
 const SITE_CONFIG = require("../config/siteConfig");
 
+// Valid Gemini production models in priority order
 const AI_MODELS = [
-  "gemini-flash-latest",
-  "gemini-3.5-flash-lite",
-  "gemini-flash-lite-latest",
+  "gemini-2.5-flash",
+  "gemini-2.5-flash-lite",
+  "gemini-2.5-pro",
 ];
+
+const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 const formatPrice = (amount) =>
   new Intl.NumberFormat(SITE_CONFIG.currency.locale, {
@@ -186,10 +189,10 @@ const chat = async (req, res, next) => {
             .join("\n")
         : "\n\n[AVAILABLE PRODUCTS] Keine passenden Produkte gefunden. Antworte hilfreich auf Deutsch, stelle eine Rückfrage oder verweise auf /products.";
 
-    // Initialize new SDK client
+    // Initialize SDK client
     const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
-    // Format conversation history for new SDK
+    // Format conversation history
     const contents = history
       .filter((m) => m.role && m.content && typeof m.content === "string")
       .slice(-10)
@@ -207,6 +210,7 @@ const chat = async (req, res, next) => {
     let response;
     let lastModelError;
 
+    // Fallback iteration
     for (const model of AI_MODELS) {
       try {
         response = await ai.models.generateContent({
@@ -214,20 +218,33 @@ const chat = async (req, res, next) => {
           contents,
           config: {
             systemInstruction: SYSTEM_PROMPT + productContext,
-            // maxOutputTokens: 300,
             temperature: 0.7,
             topP: 0.9,
           },
         });
-        break;
+
+        if (response && response.text) {
+          break;
+        }
       } catch (err) {
         lastModelError = err;
-        console.error(`Gemini model ${model} failed:`, err.message);
+        console.error(`Gemini model ${model} failed:`, err.message || err);
+
+        // Pause briefly on high-demand or rate-limit errors before invoking fallback
+        const isTransient =
+          err.status === 503 ||
+          err.status === 429 ||
+          (err.message &&
+            (err.message.includes("503") || err.message.includes("429")));
+
+        if (isTransient) {
+          await delay(600);
+        }
       }
     }
 
-    if (!response) {
-      throw lastModelError || new Error("All Gemini models failed");
+    if (!response || !response.text) {
+      throw lastModelError || new Error("All Gemini models failed to respond.");
     }
 
     return res.json({
