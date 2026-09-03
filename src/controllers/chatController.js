@@ -4,9 +4,9 @@ const SITE_CONFIG = require("../config/siteConfig");
 
 // Valid Gemini production models in priority order
 const AI_MODELS = [
-  "gemini-2.5-flash",
-  "gemini-2.5-flash-lite",
-  "gemini-2.5-pro",
+  "gemini-flash-latest",
+  "gemini-3.5-flash-lite",
+  "gemini-flash-lite-latest",
 ];
 
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
