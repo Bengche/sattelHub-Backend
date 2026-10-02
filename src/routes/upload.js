@@ -13,7 +13,22 @@ const { adminOnly } = require("../middleware/admin");
 router.post("/products", adminOnly, (req, res) => {
   uploadProductImages(req, res, async (err) => {
     if (err) {
-      return res.status(400).json({ success: false, message: err.message });
+      const statusMatch = err.message.match(/status code - (\d+)/i);
+      const upstreamStatus = Number(err.http_code || err.statusCode || statusMatch?.[1]);
+      const isProviderError = Number.isFinite(upstreamStatus) && upstreamStatus > 0;
+
+      console.error("Product image upload failed:", {
+        name: err.name,
+        message: err.message,
+        code: err.code,
+        upstreamStatus: isProviderError ? upstreamStatus : undefined,
+      });
+
+      return res.status(isProviderError ? 502 : 400).json({
+        success: false,
+        message: err.message,
+        ...(isProviderError && { upstreamStatus }),
+      });
     }
 
     if (!req.files || req.files.length === 0) {
