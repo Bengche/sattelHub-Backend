@@ -14,8 +14,11 @@ router.post("/products", adminOnly, (req, res) => {
   uploadProductImages(req, res, async (err) => {
     if (err) {
       const statusMatch = err.message.match(/status code - (\d+)/i);
-      const upstreamStatus = Number(err.http_code || err.statusCode || statusMatch?.[1]);
-      const isProviderError = Number.isFinite(upstreamStatus) && upstreamStatus > 0;
+      const upstreamStatus = Number(
+        err.http_code || err.statusCode || statusMatch?.[1],
+      );
+      const isProviderError =
+        Number.isFinite(upstreamStatus) && upstreamStatus > 0;
 
       console.error("Product image upload failed:", {
         name: err.name,
