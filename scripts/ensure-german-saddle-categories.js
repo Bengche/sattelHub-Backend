@@ -16,18 +16,73 @@ const pool = new Pool({
 
 const categories = [
   {
-    name: "Barocksättel",
-    slug: "barocksattel",
+    name: "Westernsättel",
+    slug: "western-saettel",
     description:
-      "Barocksättel mit tiefem Sitz und klassischer Ausrichtung für barocke Pferderassen und anspruchsvolle Dressur.",
-    sortOrder: 9,
+      "Westernsättel für Freizeit, Training und Westernsport.",
+    sortOrder: 1,
+  },
+  {
+    name: "Englische Sättel",
+    slug: "englische-saettel",
+    description:
+      "Englische Sättel für vielseitige Einsatzbereiche.",
+    sortOrder: 2,
+  },
+  {
+    name: "Dressursättel",
+    slug: "dressursaettel",
+    description: "Sättel für Dressur und klassische Reitweisen.",
+    sortOrder: 3,
+  },
+  {
+    name: "Springsättel",
+    slug: "springsaettel",
+    description: "Sättel für Springreiten und Parcours.",
+    sortOrder: 4,
   },
   {
     name: "Wanderreitsättel",
-    slug: "wanderreitsattel",
+    slug: "wanderreitsaettel",
     description:
-      "Bequeme, ausdauernde Wanderreitsättel für lange Ausritte und mehrtägige Touren.",
+      "Komfortable Sättel für lange Ausritte und mehrtägige Touren.",
+    sortOrder: 5,
+  },
+  {
+    name: "Barrel-Racing-Sättel",
+    slug: "barrel-racing-saettel",
+    description: "Leichte, sichere Sättel für Barrel Racing.",
+    sortOrder: 6,
+  },
+  {
+    name: "Jugendsättel",
+    slug: "jugendsaettel",
+    description: "Passende Sättel für junge Reiterinnen und Reiter.",
+    sortOrder: 7,
+  },
+  {
+    name: "Sattelzubehör",
+    slug: "sattelzubehoer",
+    description: "Zubehör und Pflegeprodukte rund um den Sattel.",
+    sortOrder: 8,
+  },
+  {
+    name: "Barocksättel",
+    slug: "barocksaettel",
+    description: "Sättel für barocke Pferderassen und klassische Reitweisen.",
+    sortOrder: 9,
+  },
+  {
+    name: "Vielseitigkeitssättel",
+    slug: "vielseitigkeitssaettel",
+    description: "Vielseitige Sättel für verschiedene Reitdisziplinen.",
     sortOrder: 10,
+  },
+  {
+    name: "Sonstige Sättel",
+    slug: "sonstige-saettel",
+    description: "Weitere Sättel ohne spezifische Kategorie.",
+    sortOrder: 11,
   },
 ];
 

@@ -33,13 +33,6 @@ END $$;
 CREATE TYPE payment_status AS ENUM ('pending', 'paid', 'failed', 'refunded');
 
 DO $$ BEGIN
-  IF EXISTS (SELECT 1 FROM pg_type WHERE typname = 'saddle_discipline') THEN
-    DROP TYPE saddle_discipline CASCADE;
-  END IF;
-END $$;
-CREATE TYPE saddle_discipline AS ENUM ('western', 'english', 'dressage', 'jumping', 'trail', 'barrel_racing', 'cutting', 'endurance', 'all_purpose', 'other');
-
-DO $$ BEGIN
   IF EXISTS (SELECT 1 FROM pg_type WHERE typname = 'saddle_condition') THEN
     DROP TYPE saddle_condition CASCADE;
   END IF;
@@ -141,7 +134,6 @@ CREATE TABLE products (
   slug                VARCHAR(300) UNIQUE NOT NULL,
   sku                 VARCHAR(100) UNIQUE,
   category_id         UUID REFERENCES categories(id) ON DELETE SET NULL,
-  discipline          saddle_discipline,
   short_description   TEXT,
   description         TEXT NOT NULL,
   price               NUMERIC(10, 2) NOT NULL,
@@ -182,7 +174,6 @@ CREATE TABLE products (
 
 CREATE INDEX idx_products_slug ON products(slug);
 CREATE INDEX idx_products_category ON products(category_id);
-CREATE INDEX idx_products_discipline ON products(discipline);
 CREATE INDEX idx_products_featured ON products(is_featured) WHERE is_featured = TRUE;
 CREATE INDEX idx_products_active ON products(is_active) WHERE is_active = TRUE;
 CREATE INDEX idx_products_price ON products(price);
@@ -481,14 +472,17 @@ $$ LANGUAGE plpgsql;
 -- ─── SEED CATEGORIES ──────────────────────────────────────────────────────────
 
 INSERT INTO categories (name, slug, description, sort_order) VALUES
-  ('Western Saddles', 'western-saddles', 'Authentic Western saddles built for work, performance, and pleasure riding. Crafted with premium leather for lasting comfort and durability.', 1),
-  ('English Saddles', 'english-saddles', 'Classic English saddles for riders who demand precision, elegance, and performance across all English disciplines.', 2),
-  ('Dressage Saddles', 'dressage-saddles', 'Precision-engineered dressage saddles that position the rider in perfect balance for optimal communication with the horse.', 3),
-  ('Jumping Saddles', 'jumping-saddles', 'Forward-cut jumping saddles designed for close contact and freedom of movement over fences.', 4),
-  ('Trail Saddles', 'trail-saddles', 'Comfortable, lightweight trail saddles built for long-distance rides across varied terrain.', 5),
-  ('Barrel Racing Saddles', 'barrel-racing-saddles', 'High-performance barrel racing saddles that keep you secure during explosive turns and sprints.', 6),
-  ('Youth & Youth Saddles', 'youth-saddles', 'Properly fitted saddles for young riders designed with safety and comfort as top priorities.', 7),
-  ('Saddle Accessories', 'saddle-accessories', 'Premium saddle pads, girths, stirrups, leathers, and care products to complement your saddle setup.', 8);
+  ('Westernsättel', 'western-saettel', 'Westernsättel für Freizeit, Training und Westernsport.', 1),
+  ('Englische Sättel', 'englische-saettel', 'Englische Sättel für vielseitige Einsatzbereiche.', 2),
+  ('Dressursättel', 'dressursaettel', 'Sättel für Dressur und klassische Reitweisen.', 3),
+  ('Springsättel', 'springsaettel', 'Sättel für Springreiten und Parcours.', 4),
+  ('Wanderreitsättel', 'wanderreitsaettel', 'Komfortable Sättel für lange Ausritte und mehrtägige Touren.', 5),
+  ('Barrel-Racing-Sättel', 'barrel-racing-saettel', 'Leichte, sichere Sättel für Barrel Racing.', 6),
+  ('Jugendsättel', 'jugendsaettel', 'Passende Sättel für junge Reiterinnen und Reiter.', 7),
+  ('Sattelzubehör', 'sattelzubehoer', 'Zubehör und Pflegeprodukte rund um den Sattel.', 8),
+  ('Barocksättel', 'barocksaettel', 'Sättel für barocke Pferderassen und klassische Reitweisen.', 9),
+  ('Vielseitigkeitssättel', 'vielseitigkeitssaettel', 'Vielseitige Sättel für verschiedene Reitdisziplinen.', 10),
+  ('Sonstige Sättel', 'sonstige-saettel', 'Weitere Sättel ohne spezifische Kategorie.', 11);
 
 -- ─── SEED ADMIN USER ──────────────────────────────────────────────────────────
 -- Password: Boyalinco$10 (will be hashed by setup-db.js after creation)

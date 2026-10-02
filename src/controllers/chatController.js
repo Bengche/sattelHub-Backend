@@ -112,7 +112,7 @@ async function searchProducts(message) {
 
   const conditions = keywords.map(
     (_, i) =>
-      `(p.name ILIKE $${i + 1} OR p.brand ILIKE $${i + 1} OR p.short_description ILIKE $${i + 1} OR p.discipline::text ILIKE $${i + 1} OR c.name ILIKE $${i + 1})`,
+      `(p.name ILIKE $${i + 1} OR p.brand ILIKE $${i + 1} OR p.short_description ILIKE $${i + 1} OR c.name ILIKE $${i + 1})`,
   );
   const values = keywords.map((k) => `%${k}%`);
 
@@ -120,7 +120,7 @@ async function searchProducts(message) {
     const result = await pool.query(
       `SELECT
          p.id, p.name, p.slug, p.price, p.compare_price,
-         p.discipline, p.condition, p.short_description,
+         p.condition, p.short_description,
          p.stock_quantity, p.average_rating, p.brand,
          (SELECT pi.url FROM product_images pi WHERE pi.product_id = p.id AND pi.is_primary = TRUE LIMIT 1) AS image_url,
          c.name AS category_name
@@ -182,7 +182,7 @@ const chat = async (req, res, next) => {
               (p) =>
                 `• ${p.name}${p.brand ? ` von ${p.brand}` : ""} - ${formatPrice(parseFloat(p.price))}` +
                 `${p.compare_price ? ` (zuvor ${formatPrice(parseFloat(p.compare_price))})` : ""}` +
-                ` | ${p.discipline ? p.discipline.replace("_", " ") : "alle Disziplinen"}` +
+                ` | Kategorie: ${p.category_name || "Sonstige Sättel"}` +
                 ` | Zustand: ${p.condition || "neu"}` +
                 ` | Bewertung: ${p.average_rating || "k. A."}/5`,
             )
@@ -256,7 +256,7 @@ const chat = async (req, res, next) => {
         slug: p.slug,
         price: parseFloat(p.price),
         compare_price: p.compare_price ? parseFloat(p.compare_price) : null,
-        discipline: p.discipline,
+        category_name: p.category_name,
         condition: p.condition,
         image_url: p.image_url || null,
         brand: p.brand || null,

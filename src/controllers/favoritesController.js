@@ -4,10 +4,11 @@ const getFavorites = async (req, res, next) => {
   try {
     const result = await pool.query(
       `SELECT f.id, f.created_at, p.id AS product_id, p.name, p.slug, p.price, p.compare_price,
-              p.brand, p.discipline, p.stock_quantity,
+              p.brand, p.stock_quantity, c.name AS category_name,
               (SELECT url FROM product_images WHERE product_id = p.id AND is_primary = TRUE LIMIT 1) AS image
        FROM favorites f
        JOIN products p ON p.id = f.product_id
+      LEFT JOIN categories c ON c.id = p.category_id
        WHERE f.user_id = $1 AND p.is_active = TRUE
        ORDER BY f.created_at DESC`,
       [req.user.id],

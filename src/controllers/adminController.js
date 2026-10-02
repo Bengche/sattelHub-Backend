@@ -466,7 +466,6 @@ const adminPatchProduct = async (req, res, next) => {
       lowStockThreshold: "low_stock_threshold",
       brand: "brand",
       categoryId: "category_id",
-      discipline: "discipline",
       condition: "condition",
       seatSize: "seat_size",
       gulletWidth: "gullet_width",

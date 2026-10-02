@@ -10,7 +10,6 @@ const getProducts = async (req, res, next) => {
       page = 1,
       limit = 12,
       category,
-      discipline,
       minPrice,
       maxPrice,
       search,
@@ -26,26 +25,6 @@ const getProducts = async (req, res, next) => {
     if (category) {
       params.push(category);
       conditions.push(`c.slug = $${params.length}`);
-    }
-    if (discipline) {
-      // Broad category slugs expand to all related discipline enum values
-      const DISCIPLINE_GROUPS = {
-        english: ["english", "dressage", "jumping", "all_purpose"],
-        western: ["western", "barrel_racing", "trail", "cutting", "endurance"],
-        dressage: ["dressage"],
-        jumping: ["jumping"],
-        trail: ["trail", "endurance"],
-        barrel_racing: ["barrel_racing"],
-        all_purpose: ["all_purpose"],
-        cutting: ["cutting"],
-        endurance: ["endurance"],
-        youth: ["other"],
-      };
-      const related = DISCIPLINE_GROUPS[discipline.toLowerCase()] || [
-        discipline.toLowerCase(),
-      ];
-      params.push(related);
-      conditions.push(`p.discipline::text = ANY($${params.length}::text[])`);
     }
     if (minPrice) {
       params.push(parseFloat(minPrice));
@@ -98,7 +77,7 @@ const getProducts = async (req, res, next) => {
     params.push(offset);
 
     const result = await pool.query(
-      `SELECT p.id, p.name, p.slug, p.price, p.compare_price, p.discipline,
+      `SELECT p.id, p.name, p.slug, p.price, p.compare_price,
               p.seat_size, p.gullet_width, p.brand, p.color, p.condition,
               p.is_featured, p.average_rating, p.review_count, p.stock_quantity,
               p.is_trial_eligible, p.short_description,
@@ -169,9 +148,11 @@ const getProduct = async (req, res, next) => {
 
     // Get related products
     const related = await pool.query(
-      `SELECT p.id, p.name, p.slug, p.price, p.compare_price, p.discipline, p.brand,
+            `SELECT p.id, p.name, p.slug, p.price, p.compare_price, p.brand,
+              c.name AS category_name, c.slug AS category_slug,
               (SELECT pi.url FROM product_images pi WHERE pi.product_id = p.id AND pi.is_primary = TRUE LIMIT 1) AS primary_image
        FROM products p
+             LEFT JOIN categories c ON c.id = p.category_id
        WHERE p.category_id = $1 AND p.id != $2 AND p.is_active = TRUE
        LIMIT 4`,
       [product.category_id, product.id],
@@ -222,7 +203,6 @@ const createProduct = async (req, res, next) => {
     const {
       name,
       categoryId,
-      discipline,
       shortDescription,
       description,
       price,
@@ -258,6 +238,13 @@ const createProduct = async (req, res, next) => {
       availableTreeSizes,
     } = req.body;
 
+    if (!categoryId) {
+      return res.status(400).json({
+        success: false,
+        message: "Bitte wählen Sie eine Kategorie aus.",
+      });
+    }
+
     let slug = slugify(name, { lower: true, strict: true });
     // Ensure unique slug
     const existing = await pool.query(
@@ -270,7 +257,7 @@ const createProduct = async (req, res, next) => {
 
     const result = await pool.query(
       `INSERT INTO products
-        (name, slug, category_id, discipline, short_description, description,
+        (name, slug, category_id, short_description, description,
          price, compare_price, cost_price, stock_quantity, low_stock_threshold,
          weight_lbs, seat_size, gullet_width, tree_type, leather_type, leather_origin,
          horn_height, cantle_height, rigging, fender_type, stirrup_type, color,
@@ -278,14 +265,13 @@ const createProduct = async (req, res, next) => {
          meta_title, meta_description, meta_keywords, tags,
          available_seat_sizes, available_colors, available_tree_sizes)
        VALUES
-        ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,
-         $21,$22,$23,$24,$25,$26,$27,$28,$29,$30,$31,$32,$33,$34,$35,$36)
+        ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,
+         $20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30,$31,$32,$33,$34,$35)
        RETURNING *`,
       [
         name,
         slug,
         categoryId || null,
-        discipline || null,
         shortDescription,
         description,
         price,
@@ -355,11 +341,17 @@ const updateProduct = async (req, res, next) => {
     const { id } = req.params;
     const fields = req.body;
 
+    if (fields.categoryId === null || fields.categoryId === "") {
+      return res.status(400).json({
+        success: false,
+        message: "Produkte müssen einer Kategorie zugeordnet sein.",
+      });
+    }
+
     // Build dynamic update query
     const allowedFields = [
       "name",
       "category_id",
-      "discipline",
       "short_description",
       "description",
       "price",

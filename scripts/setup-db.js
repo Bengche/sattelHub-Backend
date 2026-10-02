@@ -142,7 +142,7 @@ function getBlogPosts() {
 <p>The first question to ask is: what will you primarily be doing in this saddle? The major disciplines broadly fall into two categories — Western and English — each with distinct saddle designs.</p>
 
 <h3>Western Disciplines</h3>
-<p><a href="/products?discipline=western">Western saddles</a> are characterized by their larger seat, prominent horn, and deep seat designed for long hours of riding. They're ideal for:</p>
+<p><a href="/products?category=western-saettel">Western saddles</a> are characterized by their larger seat, prominent horn, and deep seat designed for long hours of riding. They're ideal for:</p>
 <ul>
 <li>Trail and pleasure riding</li>
 <li>Ranch work and cattle roping</li>
@@ -152,7 +152,7 @@ function getBlogPosts() {
 </ul>
 
 <h3>English Disciplines</h3>
-<p><a href="/products?discipline=english">English saddles</a> are lighter, closer-contact saddles that allow the rider to feel every movement of the horse. They're used in:</p>
+<p><a href="/products?category=englische-saettel">English saddles</a> are lighter, closer-contact saddles that allow the rider to feel every movement of the horse. They're used in:</p>
 <ul>
 <li>Dressage — demanding precision and elegance</li>
 <li>Show jumping — requiring forward balance</li>
@@ -248,7 +248,7 @@ function getBlogPosts() {
 <p>Western and English saddle traditions developed on different continents for different purposes, yet both have produced some of the world's most refined equestrian equipment. Understanding the core differences helps you choose the right tool for your riding goals.</p>
 
 <h2>The Western Saddle</h2>
-<p>Born from the working traditions of the American West, the <a href="/products?discipline=western">Western saddle</a> was designed for long days in the saddle — herding cattle, crossing vast terrain, and performing the demanding work of the ranch hand. Its design prioritizes security, stability, and comfort over long distances.</p>
+<p>Born from the working traditions of the American West, the <a href="/products?category=western-saettel">Western saddle</a> was designed for long days in the saddle — herding cattle, crossing vast terrain, and performing the demanding work of the ranch hand. Its design prioritizes security, stability, and comfort over long distances.</p>
 
 <h3>Key Features of Western Saddles</h3>
 <ul>
@@ -269,7 +269,7 @@ function getBlogPosts() {
 </ul>
 
 <h2>The English Saddle</h2>
-<p>Developed primarily in Europe, the <a href="/products?discipline=english">English saddle</a> is a design philosophy of minimal interference — the rider sits closer to the horse, communicates more subtly through leg and seat aids, and maintains a more upright, balanced position.</p>
+<p>Developed primarily in Europe, the <a href="/products?category=englische-saettel">English saddle</a> is a design philosophy of minimal interference — the rider sits closer to the horse, communicates more subtly through leg and seat aids, and maintains a more upright, balanced position.</p>
 
 <h3>Key Features of English Saddles</h3>
 <ul>
@@ -282,8 +282,8 @@ function getBlogPosts() {
 
 <h3>Best English Riding Disciplines</h3>
 <ul>
-<li><a href="/products?discipline=dressage">Dressage</a></li>
-<li><a href="/products?discipline=jumping">Show jumping</a></li>
+<li><a href="/products?category=dressursaettel">Dressage</a></li>
+<li><a href="/products?category=springsaettel">Show jumping</a></li>
 <li>Eventing (three-day eventing)</li>
 <li>Hunt seat equitation</li>
 <li>Polo</li>
@@ -292,7 +292,7 @@ function getBlogPosts() {
 <h2>Head-to-Head Comparison</h2>
 
 <h3>Comfort for Long Rides</h3>
-<p>Western saddles win for long-distance trail riding. Their larger bearing surface distributes the rider's weight over a greater area of the horse's back, and the deep seat provides more rider support over many hours. However, a well-padded <a href="/products?discipline=trail">trail saddle</a> specifically designed for endurance can compete.</p>
+<p>Western saddles win for long-distance trail riding. Their larger bearing surface distributes the rider's weight over a greater area of the horse's back, and the deep seat provides more rider support over many hours. However, a well-padded <a href="/products?category=wanderreitsaettel">trail saddle</a> specifically designed for endurance can compete.</p>
 
 <h3>Sensitivity and Communication</h3>
 <p>English saddles win for refined communication. The close-contact design gives the rider far more feel of the horse's movement, which is why all precision disciplines — dressage, jumping, eventing — use English saddles exclusively.</p>
@@ -629,7 +629,7 @@ function getBlogPosts() {
         "Everything you need to know about buying a dressage saddle. Head, flap length, seat size, panel options, brand comparisons and fitting advice for dressage riders.",
       reading_time: 10,
       content: `<h2>Dressage: The Art of Riding</h2>
-<p>Dressage — derived from the French word for "training" — is the highest expression of classical horsemanship. It requires the rider to develop absolute balance, independent aids, and a deep, secure seat in order to communicate invisibly with the horse. The <a href="/products?discipline=dressage">dressage saddle</a> is designed specifically to support this ideal position.</p>
+<p>Dressage — derived from the French word for "training" — is the highest expression of classical horsemanship. It requires the rider to develop absolute balance, independent aids, and a deep, secure seat in order to communicate invisibly with the horse. The <a href="/products?category=dressursaettel">dressage saddle</a> is designed specifically to support this ideal position.</p>
 
 <h2>How Dressage Saddles Differ</h2>
 <p>While all English saddles share certain design principles, dressage saddles have distinct characteristics that set them apart from jumping, all-purpose, or general riding saddles.</p>
@@ -715,7 +715,7 @@ function getBlogPosts() {
         "Find the perfect show jumping saddle. Learn about forward cut flaps, knee blocks, seat depth, panel fit, and the top brands trusted by international show jumpers.",
       reading_time: 8,
       content: `<h2>The Jump Saddle's Purpose</h2>
-<p>Jumping imposes unique demands on both horse and rider. In the air over a fence, the rider must adopt a dramatically forward position — upper body folded forward, weight down into the heels, hands following the horse's mouth — while maintaining balance and security. The <a href="/products?discipline=jumping">jumping saddle</a> is precisely engineered to make this position natural and supported.</p>
+<p>Jumping imposes unique demands on both horse and rider. In the air over a fence, the rider must adopt a dramatically forward position — upper body folded forward, weight down into the heels, hands following the horse's mouth — while maintaining balance and security. The <a href="/products?category=springsaettel">jumping saddle</a> is precisely engineered to make this position natural and supported.</p>
 
 <h2>The Forward Cut Flap</h2>
 <p>The most visible distinction of a jumping saddle is its forward-cut flap. When riders shorten their stirrups for jumping, their knees move significantly forward. The forward-cut flap places the knee roll in exactly the right position to support the knee in this shortened position, preventing the rider from blocking the horse's shoulder movement.</p>
@@ -748,7 +748,7 @@ function getBlogPosts() {
 <h2>Jumping Saddle Care Notes</h2>
 <p>Jumping saddles are subjected to greater physical stress than flatwork saddles — the stresses of jumping impact the billets, stirrup bars, and stitching more heavily. Inspect all stitching, billets, and buckle guards regularly. Replace billets showing any cracking or wear immediately — a broken billet mid-course is a serious safety hazard.</p>
 
-<p>Explore our selection of <a href="/products?discipline=jumping">show jumping saddles</a> at Saddles Market. Every saddle ships with a 30-day free trial — ride it, jump in it, assess it before you commit.</p>`,
+<p>Explore our selection of <a href="/products?category=springsaettel">show jumping saddles</a> at Saddles Market. Every saddle ships with a 30-day free trial — ride it, jump in it, assess it before you commit.</p>`,
     },
     {
       // Trail Riding Saddles: Comfort for the Long Ride
@@ -771,7 +771,7 @@ function getBlogPosts() {
         "The best trail riding saddles keep you comfortable for hours. Learn about seat materials, padding systems, weight distribution, and the top features to look for when buying a trail saddle.",
       reading_time: 8,
       content: `<h2>The Demands of Trail Riding</h2>
-<p>A trail rider may spend four, six, eight hours or more in the saddle in a single day. Unlike arena work where every 20 minutes brings a change of pace and direction, trail riding involves sustained posting, sitting, and often two-point position over varied terrain. The <a href="/products?discipline=trail">trail saddle</a> must prioritize comfort above almost everything else — for both horse and rider.</p>
+<p>A trail rider may spend four, six, eight hours or more in the saddle in a single day. Unlike arena work where every 20 minutes brings a change of pace and direction, trail riding involves sustained posting, sitting, and often two-point position over varied terrain. The <a href="/products?category=wanderreitsaettel">trail saddle</a> must prioritize comfort above almost everything else — for both horse and rider.</p>
 
 <h2>Western vs. English Trail Saddles</h2>
 <p>Both traditions have evolved excellent trail-specific designs:</p>
@@ -817,7 +817,7 @@ function getBlogPosts() {
 <li>Synthetic materials for easy cleaning and weather resistance</li>
 </ul>
 
-<p>Browse our full range of <a href="/products?discipline=trail">trail and endurance saddles</a>. Our experts are available to help you match the right saddle to your riding style, terrain, and horse's conformation. Every saddle comes with our <a href="/returns-refunds">30-day free trial</a>.</p>`,
+<p>Browse our full range of <a href="/products?category=wanderreitsaettel">trail and endurance saddles</a>. Our experts are available to help you match the right saddle to your riding style, terrain, and horse's conformation. Every saddle comes with our <a href="/returns-refunds">30-day free trial</a>.</p>`,
     },
     {
       // The History of Horse Saddles: From Ancient Times to Modern Design
@@ -980,7 +980,7 @@ function getBlogPosts() {
       reading_time: 7,
       content: `<h2>The Barrel Racing Discipline</h2>
 <p>Barrel racing is one of the fastest and most athletic of all Western disciplines. In competition, horse and rider run a cloverleaf pattern around three barrels placed in a triangle, returning to the starting gate as fast as possible. Times are measured in fractions of a second, and the slightest loss of balance or security can cost a placing or even cause a fall.</p>
-<p>This extreme demand for speed, sharp turns, and explosive transitions makes <a href="/products?discipline=barrel_racing">barrel racing saddles</a> among the most specialized in all of equestrian sport.</p>
+<p>This extreme demand for speed, sharp turns, and explosive transitions makes <a href="/products?category=barrel-racing-saettel">barrel racing saddles</a> among the most specialized in all of equestrian sport.</p>
 
 <h2>Key Features of Barrel Racing Saddles</h2>
 
@@ -1017,7 +1017,7 @@ function getBlogPosts() {
 <li><strong>Tex Tan:</strong> Longstanding American brand; proven performance at competitive prices</li>
 </ul>
 
-<p>See our complete selection of <a href="/products?discipline=barrel_racing">barrel racing saddles</a> at Saddles Market. Whether you are competing at local jackpots or national finals, we have the right saddle for your horse and your riding style. All purchases include our 30-day free trial.</p>`,
+<p>See our complete selection of <a href="/products?category=barrel-racing-saettel">barrel racing saddles</a> at Saddles Market. Whether you are competing at local jackpots or national finals, we have the right saddle for your horse and your riding style. All purchases include our 30-day free trial.</p>`,
     },
     {
       // Horse Saddle Care in Winter: Essential Seasonal Tips
