@@ -1,6 +1,11 @@
 const SITE_CONFIG = require("../config/siteConfig");
 
 const { name, url, contact, address } = SITE_CONFIG;
+const formatEuro = (amount) =>
+  new Intl.NumberFormat(SITE_CONFIG.currency.locale, {
+    style: "currency",
+    currency: SITE_CONFIG.currency.code,
+  }).format(Number(amount));
 
 // ─── Base email wrapper ────────────────────────────────────────────────────────
 const baseTemplate = (content, previewText = "") => `
@@ -206,11 +211,11 @@ const orderConfirmationTemplate = ({
         <td style="padding:14px 20px;">
           <div style="font-size:15px;color:#1C3557;">${item.product_name}</div>
           <div style="font-size:13px;color:#6A6A6A;margin-top:3px;">
-            Qty: ${item.quantity}${item.seat_size ? ` &bull; Seat: ${item.seat_size}"` : ""}${item.selected_color ? ` &bull; ${item.selected_color}` : ""}${item.selected_tree_size ? ` &bull; Tree: ${item.selected_tree_size}` : ""} &bull; $${parseFloat(item.price).toFixed(2)} each
+            Menge: ${item.quantity}${item.seat_size ? ` &bull; Sitzgröße: ${item.seat_size}"` : ""}${item.selected_color ? ` &bull; Farbe: ${item.selected_color}` : ""}${item.selected_tree_size ? ` &bull; Kopfeisen: ${item.selected_tree_size}` : ""} &bull; ${formatEuro(item.price)} pro Stück
           </div>
         </td>
         <td style="padding:14px 20px;text-align:right;white-space:nowrap;font-size:15px;color:#1C3557;vertical-align:top;">
-          $${parseFloat(item.total).toFixed(2)}
+          ${formatEuro(item.total)}
         </td>
       </tr>
     </table>`,
@@ -220,36 +225,36 @@ const orderConfirmationTemplate = ({
   const displayEmail = customerEmail || order.guest_email || "";
 
   return {
-    subject: `Order Confirmed \u2014 ${order.order_number} | ${name}`,
+    subject: `Bestellung bestätigt – ${order.order_number} | ${name}`,
     html: baseTemplate(
       `
-    <p class="email-greeting">Thank you, ${firstName}.</p>
-    <p class="email-text">Your order has been received and is now in review. You will hear from our team within <strong>24 hours</strong> to confirm payment details and shipping.</p>
+    <p class="email-greeting">Vielen Dank, ${firstName}.</p>
+    <p class="email-text">Ihre Bestellung ist bei uns eingegangen und wird nun geprüft. Unser Team meldet sich innerhalb von <strong>24 Stunden</strong> bei Ihnen, um die Zahlung und den Versand abzustimmen.</p>
 
     <div class="email-info-box">
       <p>
-        <strong>Order Number:</strong> ${order.order_number}<br/>
-        <strong>Status:</strong> <span class="status-badge status-pending">Pending Review</span><br/>
-        <strong>Payment Method:</strong> ${paymentMethodLabel}<br/>
-        <strong>Date:</strong> ${new Date(order.created_at).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}
+        <strong>Bestellnummer:</strong> ${order.order_number}<br/>
+        <strong>Status:</strong> <span class="status-badge status-pending">Wird geprüft</span><br/>
+        <strong>Zahlungsart:</strong> ${paymentMethodLabel}<br/>
+        <strong>Datum:</strong> ${new Date(order.created_at).toLocaleDateString("de-DE", { year: "numeric", month: "long", day: "numeric" })}
       </p>
     </div>
 
     <div class="order-summary">
-      <div class="order-summary-header">Order Summary</div>
+      <div class="order-summary-header">Bestellübersicht</div>
       ${itemsHtml}
       <div class="order-totals">
         <table width="100%" cellpadding="0" cellspacing="0" border="0">
-          <tr><td style="padding:10px 0 4px;font-size:14px;color:#3A3A3A;">Subtotal</td><td style="padding:10px 0 4px;text-align:right;font-size:14px;color:#3A3A3A;">$${parseFloat(order.subtotal).toFixed(2)}</td></tr>
-          <tr><td style="padding:4px 0;font-size:14px;color:#3A3A3A;">${(order.shipping_method || "standard") === "express" ? "Express Shipping (2–3 days)" : "Standard Shipping (5–7 days)"}</td><td style="padding:4px 0;text-align:right;font-size:14px;">${parseFloat(order.shipping_cost) === 0 ? '<span style="color:#2D7A4F;font-weight:600;">Free</span>' : '<span style="color:#3A3A3A;">$' + parseFloat(order.shipping_cost).toFixed(2) + "</span>"}</td></tr>
-          ${parseFloat(order.discount_amount) > 0 ? `<tr><td style="padding:4px 0;font-size:14px;color:#3A3A3A;">Discount${order.coupon_code ? ` (${order.coupon_code})` : ""}</td><td style="padding:4px 0;text-align:right;font-size:14px;color:#2D7A4F;">-$${parseFloat(order.discount_amount).toFixed(2)}</td></tr>` : ""}
+          <tr><td style="padding:10px 0 4px;font-size:14px;color:#3A3A3A;">Zwischensumme</td><td style="padding:10px 0 4px;text-align:right;font-size:14px;color:#3A3A3A;">${formatEuro(order.subtotal)}</td></tr>
+          <tr><td style="padding:4px 0;font-size:14px;color:#3A3A3A;">${(order.shipping_method || "standard") === "express" ? "Expressversand (2–3 Werktage)" : "Standardversand (5–7 Werktage)"}</td><td style="padding:4px 0;text-align:right;font-size:14px;">${parseFloat(order.shipping_cost) === 0 ? '<span style="color:#2D7A4F;font-weight:600;">Kostenlos</span>' : '<span style="color:#3A3A3A;">' + formatEuro(order.shipping_cost) + "</span>"}</td></tr>
+          ${parseFloat(order.discount_amount) > 0 ? `<tr><td style="padding:4px 0;font-size:14px;color:#3A3A3A;">Rabatt${order.coupon_code ? ` (${order.coupon_code})` : ""}</td><td style="padding:4px 0;text-align:right;font-size:14px;color:#2D7A4F;">−${formatEuro(order.discount_amount)}</td></tr>` : ""}
           <tr><td colspan="2" style="padding:10px 0 4px;border-top:1px solid #E8E0D0;"></td></tr>
-          <tr><td style="padding:4px 0;font-size:17px;color:#1C3557;font-weight:bold;">Total</td><td style="padding:4px 0;text-align:right;font-size:17px;color:#1C3557;font-weight:bold;">$${parseFloat(order.total).toFixed(2)}</td></tr>
+          <tr><td style="padding:4px 0;font-size:17px;color:#1C3557;font-weight:bold;">Gesamtbetrag</td><td style="padding:4px 0;text-align:right;font-size:17px;color:#1C3557;font-weight:bold;">${formatEuro(order.total)}</td></tr>
         </table>
       </div>
     </div>
 
-    <p class="email-text" style="margin-bottom:8px;"><strong>Shipping to:</strong></p>
+    <p class="email-text" style="margin-bottom:8px;"><strong>Lieferadresse:</strong></p>
     <p class="email-text" style="margin-top:0;">
       ${order.ship_first_name} ${order.ship_last_name}<br/>
       ${order.ship_street_line1}${order.ship_street_line2 ? ", " + order.ship_street_line2 : ""}<br/>
@@ -259,7 +264,7 @@ const orderConfirmationTemplate = ({
 
     <hr class="email-divider" />
 
-    <p class="email-text" style="font-weight:bold;color:#1C3557;margin-bottom:12px;">What Happens Next</p>
+    <p class="email-text" style="font-weight:bold;color:#1C3557;margin-bottom:12px;">So geht es weiter</p>
     <div class="order-summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
@@ -267,8 +272,8 @@ const orderConfirmationTemplate = ({
             <div style="background:#C4A862;color:#fff;width:26px;height:26px;border-radius:50%;font-size:13px;text-align:center;line-height:26px;font-family:Georgia,serif;">1</div>
           </td>
           <td style="padding:14px 16px 14px 8px;border-bottom:1px solid #E8E0D0;font-size:14px;color:#3A3A3A;line-height:1.6;">
-            <strong style="color:#1C3557;">Our team reviews your order</strong><br/>
-            We will contact you at <strong>${displayEmail}</strong> within 24 hours to confirm payment and answer any questions.
+            <strong style="color:#1C3557;">Wir prüfen Ihre Bestellung</strong><br/>
+            Wir kontaktieren Sie innerhalb von 24 Stunden unter <strong>${displayEmail}</strong>, um die Zahlung zu bestätigen und Ihre Fragen zu beantworten.
           </td>
         </tr>
         <tr>
@@ -276,8 +281,8 @@ const orderConfirmationTemplate = ({
             <div style="background:#C4A862;color:#fff;width:26px;height:26px;border-radius:50%;font-size:13px;text-align:center;line-height:26px;font-family:Georgia,serif;">2</div>
           </td>
           <td style="padding:14px 16px 14px 8px;border-bottom:1px solid #E8E0D0;font-size:14px;color:#3A3A3A;line-height:1.6;">
-            <strong style="color:#1C3557;">Payment &amp; dispatch</strong><br/>
-            Once payment is confirmed, your saddle is carefully inspected, prepared, and dispatched. We'll send you tracking details immediately.
+            <strong style="color:#1C3557;">Zahlung und Versand</strong><br/>
+            Nach Zahlungseingang wird Ihr Sattel sorgfältig geprüft, vorbereitet und versendet. Ihre Sendungsnummer erhalten Sie direkt im Anschluss.
           </td>
         </tr>
         <tr>
@@ -285,25 +290,25 @@ const orderConfirmationTemplate = ({
             <div style="background:#C4A862;color:#fff;width:26px;height:26px;border-radius:50%;font-size:13px;text-align:center;line-height:26px;font-family:Georgia,serif;">3</div>
           </td>
           <td style="padding:14px 16px 14px 8px;font-size:14px;color:#3A3A3A;line-height:1.6;">
-            <strong style="color:#1C3557;">30-Day Free Trial begins on delivery</strong><br/>
-            Ride in it, assess the fit, and put it through its paces. If it is not perfect for you and your horse, we will refund or exchange it — no questions asked.
+            <strong style="color:#1C3557;">30 Tage Probereiten ab Zustellung</strong><br/>
+            Testen Sie den Sattel in Ruhe und prüfen Sie die Passform. Sollte er nicht zu Ihnen und Ihrem Pferd passen, erstatten wir den Kaufpreis oder tauschen ihn unkompliziert um.
           </td>
         </tr>
       </table>
     </div>
 
     <div class="email-cta-wrapper">
-      <a href="${url}/account/orders" class="email-cta">View My Order</a>
+      <a href="${url}/account/orders" class="email-cta">Meine Bestellung ansehen</a>
     </div>
 
     <hr class="email-divider" />
 
-    <p class="email-text">Have a question? Our team is ready to help:</p>
+    <p class="email-text">Haben Sie Fragen? Unser Team hilft Ihnen gerne weiter:</p>
     <p class="email-text">
-      <strong>Sales:</strong> <a href="mailto:${contact.salesEmail}" style="color:#1C3557;">${contact.salesEmail}</a>
+      <strong>Kontakt:</strong> <a href="mailto:${contact.salesEmail}" style="color:#1C3557;">${contact.salesEmail}</a>
     </p>
     `,
-      `Your order ${order.order_number} is confirmed — we will be in touch within 24 hours.`,
+      `Ihre Bestellung ${order.order_number} ist bestätigt. Wir melden uns innerhalb von 24 Stunden bei Ihnen.`,
     ),
   };
 };
