@@ -6,6 +6,7 @@ const {
   orderStatusUpdateTemplate,
 } = require("../utils/emailTemplates");
 const SITE_CONFIG = require("../config/siteConfig");
+const ALLOWED_PAYMENT_METHODS = new Set(["bank_transfer", "crypto"]);
 
 // Helper: Generate order number
 const generateOrderNumber = async (client) => {
@@ -15,6 +16,14 @@ const generateOrderNumber = async (client) => {
 
 // ─── Place Order ───────────────────────────────────────────────────────────────
 const placeOrder = async (req, res, next) => {
+  const paymentMethod = req.body?.paymentMethod ?? "bank_transfer";
+  if (!ALLOWED_PAYMENT_METHODS.has(paymentMethod)) {
+    return res.status(400).json({
+      success: false,
+      message: "Bitte wählen Sie Banküberweisung oder Kryptowährung.",
+    });
+  }
+
   const client = await pool.connect();
   try {
     await client.query("BEGIN");
@@ -27,7 +36,6 @@ const placeOrder = async (req, res, next) => {
       customerNotes,
       shippingMethod = "standard",
       couponCode,
-      paymentMethod = "bank_transfer",
     } = req.body;
 
     if (!items || items.length === 0) {

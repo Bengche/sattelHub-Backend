@@ -79,7 +79,6 @@ const baseTemplate = (content, previewText = "") => `
         <p>&copy; ${new Date().getFullYear()} ${name}. Alle Rechte vorbehalten.</p>
         <p>${address.full}</p>
         <p>
-          <a href="tel:${contact.phone}">${contact.phoneDisplay || contact.phone}</a> &nbsp;|&nbsp;
           <a href="mailto:${contact.supportEmail}">${contact.supportEmail}</a>
         </p>
         <div class="social-links">
@@ -96,8 +95,6 @@ const baseTemplate = (content, previewText = "") => `
 </body>
 </html>
 `;
-
-// ─── Email Verification (OTP) ─────────────────────────────────────────────────
 const emailVerificationTemplate = ({
   firstName,
   otpCode,
@@ -129,7 +126,7 @@ const emailVerificationTemplate = ({
 
     <p class="email-text" style="font-size:13px;color:#6A6A6A;">Or copy and paste this link into your browser:<br/><a href="${verifyLink}" style="color:#1C3557;word-break:break-all;">${verifyLink}</a></p>
     `,
-    `Your ${name} verification code is: ${otpCode}`,
+    `Bitte bestätigen Sie Ihre E-Mail-Adresse bei ${name}.`,
   ),
 });
 
@@ -176,9 +173,7 @@ const welcomeEmailTemplate = ({ firstName }) => ({
 
     <p class="email-text">Reach us any time:</p>
     <p class="email-text">
-      <strong>Email:</strong> <a href="mailto:${contact.supportEmail}" style="color:#1C3557;">${contact.supportEmail}</a><br/>
-      <strong>Phone:</strong> <a href="tel:${contact.phone}" style="color:#1C3557;">${contact.phoneDisplay || contact.phone}</a><br/>
-      <strong>WhatsApp:</strong> <a href="${contact.whatsappLink}" style="color:#1C3557;">${contact.whatsappDisplay || contact.whatsapp}</a>
+      <strong>Email:</strong> <a href="mailto:${contact.supportEmail}" style="color:#1C3557;">${contact.supportEmail}</a>
     </p>
     `,
     `Welcome to ${name} — your account is ready.`,
@@ -195,15 +190,14 @@ const orderConfirmationTemplate = ({
 }) => {
   const paymentMethodLabel =
     {
-      bank_transfer: "Bank Transfer",
-      zelle: "Zelle",
-      crypto: "Cryptocurrency",
+      bank_transfer: "Banküberweisung",
+      crypto: "Kryptowährung",
     }[paymentMethod] ||
     (paymentMethod
       ? paymentMethod
           .replace(/_/g, " ")
           .replace(/\b\w/g, (l) => l.toUpperCase())
-      : "Bank Transfer");
+      : "Banküberweisung");
   const itemsHtml = items
     .map(
       (item) => `
@@ -306,8 +300,7 @@ const orderConfirmationTemplate = ({
 
     <p class="email-text">Have a question? Our team is ready to help:</p>
     <p class="email-text">
-      <strong>Sales:</strong> <a href="mailto:${contact.salesEmail}" style="color:#1C3557;">${contact.salesEmail}</a><br/>
-      <strong>Phone:</strong> <a href="tel:${contact.phone}" style="color:#1C3557;">${contact.phoneDisplay || contact.phone}</a>
+      <strong>Sales:</strong> <a href="mailto:${contact.salesEmail}" style="color:#1C3557;">${contact.salesEmail}</a>
     </p>
     `,
       `Your order ${order.order_number} is confirmed — we will be in touch within 24 hours.`,
@@ -324,15 +317,14 @@ const orderNotificationSalesTemplate = ({
 }) => {
   const paymentMethodLabel =
     {
-      bank_transfer: "Bank Transfer",
-      zelle: "Zelle",
-      crypto: "Cryptocurrency",
+      bank_transfer: "Banküberweisung",
+      crypto: "Kryptowährung",
     }[paymentMethod] ||
     (paymentMethod
       ? paymentMethod
           .replace(/_/g, " ")
           .replace(/\b\w/g, (l) => l.toUpperCase())
-      : "Bank Transfer");
+      : "Banküberweisung");
   const itemsHtml = items
     .map(
       (item) => `<tr>
@@ -575,7 +567,7 @@ const orderStatusUpdateTemplate = ({
     </div>
 
     <hr class="email-divider" />
-    <p class="email-text" style="font-size:13px;color:#6A6A6A;">Questions? Contact us at <a href="mailto:${contact.supportEmail}" style="color:#1C3557;">${contact.supportEmail}</a> or call <a href="tel:${contact.phone}" style="color:#1C3557;">${contact.phoneDisplay || contact.phone}</a>.</p>
+    <p class="email-text" style="font-size:13px;color:#6A6A6A;">Questions? Contact us at <a href="mailto:${contact.supportEmail}" style="color:#1C3557;">${contact.supportEmail}</a>.</p>
     `,
       statusInfo.previewText,
     ),
@@ -691,7 +683,7 @@ const cartAbandonmentTemplate = ({
       <span style="color:#3A3A3A;">Every saddle at ${name} comes with a full 30-day trial. Ride in it, assess the fit, involve your trainer. If it is not right for you and your horse, contact us for a complete refund or exchange. No forms, no hassle.</span></p>
     </div>
 
-    <p class="email-text" style="font-size:13px;color:#6A6A6A;text-align:center;">Questions before you buy? Reply to this email or call us at <a href="tel:${contact.phone}" style="color:#1C3557;">${contact.phoneDisplay || contact.phone}</a>.</p>
+    <p class="email-text" style="font-size:13px;color:#6A6A6A;text-align:center;">Questions before you buy? Reply to this email.</p>
     `,
       msg.subject,
     ),
@@ -736,11 +728,6 @@ const contactAckTemplate = ({ name: customerName, subject, message }) => ({
       <strong>Your message:</strong><br/>${message.replace(/\n/g, "<br/>")}</p>
     </div>
 
-    <p class="email-text">For urgent inquiries, you may also reach us by:</p>
-    <p class="email-text">
-      <strong>Phone:</strong> <a href="tel:${contact.phone}" style="color:#1C3557;">${contact.phoneDisplay || contact.phone}</a><br/>
-      <strong>WhatsApp:</strong> <a href="${contact.whatsappLink}" style="color:#1C3557;">${contact.whatsappDisplay || contact.whatsapp}</a>
-    </p>
     `,
     `Your message to ${name} has been received`,
   ),

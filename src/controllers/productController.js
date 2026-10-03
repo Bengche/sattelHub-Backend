@@ -23,8 +23,12 @@ const getProducts = async (req, res, next) => {
     const conditions = ["p.is_active = TRUE"];
 
     if (category) {
-      params.push(category);
-      conditions.push(`c.slug = $${params.length}`);
+      const categorySlugs =
+        category === "barocksaettel" || category === "wanderreitsaettel"
+          ? ["barocksaettel", "wanderreitsaettel"]
+          : [category];
+      params.push(categorySlugs);
+      conditions.push(`c.slug = ANY($${params.length}::text[])`);
     }
     if (minPrice) {
       params.push(parseFloat(minPrice));
@@ -148,14 +152,19 @@ const getProduct = async (req, res, next) => {
 
     // Get related products
     const related = await pool.query(
-            `SELECT p.id, p.name, p.slug, p.price, p.compare_price, p.brand,
+      `SELECT p.id, p.name, p.slug, p.price, p.compare_price, p.brand,
               c.name AS category_name, c.slug AS category_slug,
               (SELECT pi.url FROM product_images pi WHERE pi.product_id = p.id AND pi.is_primary = TRUE LIMIT 1) AS primary_image
        FROM products p
              LEFT JOIN categories c ON c.id = p.category_id
-       WHERE p.category_id = $1 AND p.id != $2 AND p.is_active = TRUE
+       WHERE (p.category_id = $1 OR (
+         $3 = ANY(ARRAY['barocksaettel', 'wanderreitsaettel'])
+         AND p.category_id IN (
+           SELECT id FROM categories WHERE slug IN ('barocksaettel', 'wanderreitsaettel')
+         )
+       )) AND p.id != $2 AND p.is_active = TRUE
        LIMIT 4`,
-      [product.category_id, product.id],
+      [product.category_id, product.id, product.category_slug],
     );
 
     res.json({
@@ -177,12 +186,35 @@ const getProduct = async (req, res, next) => {
 // ─── Get Categories ────────────────────────────────────────────────────────────
 const getCategories = async (req, res, next) => {
   try {
+    const availableOnly = req.query.available === "true";
+    const storefrontFilter = availableOnly
+      ? `AND c.slug IN (
+           'dressursaettel', 'barocksaettel', 'springsaettel',
+           'vielseitigkeitssaettel', 'wanderreitsaettel'
+         )
+         AND category_counts.product_count > 0`
+      : "";
+
     const result = await pool.query(
-      `SELECT c.*, COUNT(p.id) AS product_count
+      `SELECT c.*, category_counts.product_count
        FROM categories c
-       LEFT JOIN products p ON p.category_id = c.id AND p.is_active = TRUE
+       CROSS JOIN LATERAL (
+         SELECT COUNT(*) AS product_count
+         FROM products p
+         WHERE p.is_active = TRUE
+           AND (
+             p.category_id = c.id
+             OR (
+               c.slug IN ('barocksaettel', 'wanderreitsaettel')
+               AND p.category_id IN (
+                 SELECT id FROM categories
+                 WHERE slug IN ('barocksaettel', 'wanderreitsaettel')
+               )
+             )
+           )
+       ) AS category_counts
        WHERE c.is_active = TRUE
-       GROUP BY c.id
+         ${storefrontFilter}
        ORDER BY c.sort_order ASC`,
     );
 

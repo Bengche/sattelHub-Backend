@@ -18,15 +18,13 @@ const categories = [
   {
     name: "Westernsättel",
     slug: "western-saettel",
-    description:
-      "Westernsättel für Freizeit, Training und Westernsport.",
+    description: "Westernsättel für Freizeit, Training und Westernsport.",
     sortOrder: 1,
   },
   {
     name: "Englische Sättel",
     slug: "englische-saettel",
-    description:
-      "Englische Sättel für vielseitige Einsatzbereiche.",
+    description: "Englische Sättel für vielseitige Einsatzbereiche.",
     sortOrder: 2,
   },
   {
@@ -44,8 +42,7 @@ const categories = [
   {
     name: "Wanderreitsättel",
     slug: "wanderreitsaettel",
-    description:
-      "Komfortable Sättel für lange Ausritte und mehrtägige Touren.",
+    description: "Komfortable Sättel für lange Ausritte und mehrtägige Touren.",
     sortOrder: 5,
   },
   {

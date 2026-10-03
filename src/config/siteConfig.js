@@ -16,9 +16,6 @@ const SITE_CONFIG = {
   contact: {
     supportEmail: "support@sattelhub.de",
     salesEmail: "sales@sattelhub.de",
-    phone: "+1 (914) 432-9936",
-    whatsapp: "+1 (669) 247-2718",
-    whatsappLink: "https://wa.me/16692472718",
   },
 
   address: {
@@ -39,14 +36,6 @@ const SITE_CONFIG = {
     adminEmail: process.env.ADMIN_EMAIL || "sales@sattelhub.de",
     salesEmail: "sales@sattelhub.de",
     replyTo: process.env.FROM_EMAIL || "support@sattelhub.de",
-  },
-
-  social: {
-    facebook: "https://facebook.com/sattelhub",
-    instagram: "https://instagram.com/sattelhub",
-    twitter: "https://twitter.com/sattelhub",
-    pinterest: "https://pinterest.com/sattelhub",
-    youtube: "https://youtube.com/@sattelhub",
   },
 
   trial: {
@@ -82,7 +71,6 @@ const SITE_CONFIG = {
     ],
     ogImage: "/og-image.jpg",
     twitterCard: "summary_large_image",
-    twitterSite: "@saddlesmarket",
   },
 
   shipping: {
